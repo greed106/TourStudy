@@ -2,16 +2,17 @@ package com.ymj.tourstudy.pojo;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private Integer uuid;
+
     private String username;
     private String password;
     private String email;
-    private LocalDateTime createdTime;
-    private LocalDateTime lastLoginTime;
+    private LocalDate createdTime;
+    private LocalDate lastLoginTime;
+
 }

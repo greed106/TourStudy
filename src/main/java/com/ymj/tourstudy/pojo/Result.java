@@ -17,7 +17,7 @@ public class Result {
     private Object data;
     //增删改的成功响应
     public static Result success(){
-        return new Result(1,"success",null);
+        return new Result(200,"success",null);
     }
     //查询的成功响应
     public static Result success(Object data){
