@@ -1,13 +1,15 @@
 package com.ymj.tourstudy.utils;
 
-public class HuffmanResult {
-    private final Node root;
-    private final String encodedData;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public HuffmanResult(Node root, String encodedData) {
-        this.root = root;
-        this.encodedData = encodedData;
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class HuffmanResult {
+    private Node root;
+    private String encodedData;
 
     public Node getRoot() {
         return root;
@@ -18,15 +20,12 @@ public class HuffmanResult {
     }
 }
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 class Node {
     char character;
     int frequency;
     Node left, right;
 
-    Node(char character, int frequency, Node left, Node right) {
-        this.character = character;
-        this.frequency = frequency;
-        this.left = left;
-        this.right = right;
-    }
 }
