@@ -28,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
     public User validLogin(String username, String password) {
         User valid = userMapper.getUserByUsernameAndPassword(username, password);
         if(valid == null){
-            throw new WrongUsernameOrPasswordException("用户名或密码错误");
+            throw new WrongUsernameOrPasswordException("Wrong username or password");
         }
         userMapper.updateLastLoginTime(username, LocalDate.now());
         valid.setLastLoginTime(LocalDate.now());

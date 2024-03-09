@@ -17,8 +17,6 @@ import java.time.LocalDate;
 @Service
 public class RegisterServiceImpl implements RegisterService {
     @Autowired
-    private EmailVerificationUtils emailVerificationUtils;
-    @Autowired
     private UserMapper userMapper;
 
     /**
@@ -31,7 +29,7 @@ public class RegisterServiceImpl implements RegisterService {
     public boolean isValidUsername(String username) {
         User valid = userMapper.getUserByUsername(username);
         if(valid != null){
-            throw new DuplicateUsernameException("该用户名已被注册");
+            throw new DuplicateUsernameException("This username has been registered");
         }
         return true;
     }
@@ -44,9 +42,12 @@ public class RegisterServiceImpl implements RegisterService {
      */
     @Override
     public boolean isValidEmail(String email) {
+        if(email == null || email.equals("")){
+            throw new DuplicateEmailException("Email cannot be empty");
+        }
         User valid = userMapper.getUserByEmail(email);
         if(valid != null){
-            throw new DuplicateEmailException("该邮箱已被注册");
+            throw new DuplicateEmailException("This email has been registered");
         }
         return true;
     }
@@ -71,7 +72,7 @@ public class RegisterServiceImpl implements RegisterService {
             isValid = false;
         }
         if(!isValid){
-            throw new WrongCaptchaException("无效的验证令牌");
+            throw new WrongCaptchaException("Invalid captcha");
         }
         return true;
     }
