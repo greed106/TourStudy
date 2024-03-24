@@ -2,8 +2,8 @@ spring:
   #database
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://40.114.126.157:3306/tour_system
-    username: yangmingjia
+    url: jdbc:mysql://localhost:3306/tour_system
+    username: ymj
     password: Ymj20040312@
     hikari:
       max-lifetime: 30000

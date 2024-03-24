@@ -1,9 +1,8 @@
 package com.ymj.tourstudy.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class MyHashMap<K, V> {
     private static class Entry<K, V> {
@@ -90,6 +89,46 @@ public class MyHashMap<K, V> {
 
     private int getBucketIndex(K key) {
         return key == null ? 0 : Math.abs(key.hashCode()) % capacity;
+    }
+
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction){
+        Objects.requireNonNull(mappingFunction);
+        int bucketIndex = getBucketIndex(key);
+        List<Entry<K, V>> bucket = buckets.get(bucketIndex);
+
+        // 查找键是否已存在
+        for (Entry<K, V> entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                return entry.value;
+            }
+        }
+
+        // 如果键不存在，则使用mappingFunction计算值
+        V value = mappingFunction.apply(key);
+        if(value != null){
+            bucket.add(new Entry<>(key, value));
+        }
+        return value;
+    }
+
+    public boolean isEmpty() {
+        for (List<Entry<K, V>> bucket : buckets) {
+            if (!bucket.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public Set<K> keySet() {
+        Set<K> keys = new HashSet<>();
+        for (List<Entry<K, V>> bucket : buckets) {
+            for (Entry<K, V> entry : bucket) {
+                keys.add(entry.key);
+            }
+        }
+        return keys;
     }
 
     public static void main(String[] args) {
