@@ -33,33 +33,33 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-
-
-
-        //获取请求的url
-        String url = request.getRequestURL().toString();
-        log.info("请求的url:"+url);
-
-        //获取请求头中的令牌(Authorization)
-        String jwt = request.getHeader("Authorization");
-
-        //判断令牌是否存在，如果不存在，返回错误结果（未登录）
-        if(!StringUtils.hasLength(jwt)){
-            log.info("请求头Authorization为空，返回未登录信息");
-            //使用全局异常处理器机制处理抛出的异常
-            throw new NotLoggedInException("用户尚未登陆");
-        }
-
-        //解析JWT令牌，判断是否合法
-        //如果解析失败，返回错误结果（未登录）
-        try{
-            JwtUtils.parseJWT(jwt);
-        }catch(Exception e){
-            e.printStackTrace();
-            log.info("令牌解析失败，返回未登录的错误信息");
-            throw new NotLoggedInException("令牌解析错误");
-        }
-        log.info("令牌解析成功，放行");
+//
+//
+//
+//        //获取请求的url
+//        String url = request.getRequestURL().toString();
+//        log.info("请求的url:"+url);
+//
+//        //获取请求头中的令牌(Authorization)
+//        String jwt = request.getHeader("Authorization");
+//
+//        //判断令牌是否存在，如果不存在，返回错误结果（未登录）
+//        if(!StringUtils.hasLength(jwt)){
+//            log.info("请求头Authorization为空，返回未登录信息");
+//            //使用全局异常处理器机制处理抛出的异常
+//            throw new NotLoggedInException("用户尚未登陆");
+//        }
+//
+//        //解析JWT令牌，判断是否合法
+//        //如果解析失败，返回错误结果（未登录）
+//        try{
+//            JwtUtils.parseJWT(jwt);
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            log.info("令牌解析失败，返回未登录的错误信息");
+//            throw new NotLoggedInException("令牌解析错误");
+//        }
+//        log.info("令牌解析成功，放行");
         //令牌验证通过，放行
         return true;
     }

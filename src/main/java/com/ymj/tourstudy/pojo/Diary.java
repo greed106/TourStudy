@@ -12,8 +12,6 @@ import java.time.LocalDate;
 public class Diary {
     //外键
     private String username;
-    //主键
-    private Integer id;
     private String title;
     private String content;
     private LocalDate createdTime;
