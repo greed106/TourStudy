@@ -117,6 +117,24 @@ public class TrieTree<T> {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        collectWords(root, new StringBuilder(), sb);
+        return sb.toString();
+    }
+
+    private void collectWords(TrieNode<T> node, StringBuilder path, StringBuilder result) {
+        if (node.isEndOfWord) {
+            result.append(path.toString()).append(" -> ").append(node.data).append("\n");
+        }
+        node.children.forEach((character, trieNode) -> {
+            path.append(character);
+            collectWords(trieNode, path, result);
+            path.deleteCharAt(path.length() - 1);
+        });
+    }
+
     public static void main(String[] args) {
         // 测试插入和搜索
         TrieTree<Integer> trieInt = new TrieTree<>();
