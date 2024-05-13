@@ -31,10 +31,10 @@ public class DiaryController {
         return Result.success();
     }
 
-    @PostMapping("/tour/diary/get")
+    @PostMapping("/tour/diary/get_diary")
     public Result getDiary(@RequestBody GetDiaryRequest request){
         String username = request.getUsername();
-        String titlePrefix = request.getTitlePrefix();
+        String titlePrefix = request.getTitle();
         log.info("获取日记请求："+username+" "+titlePrefix);
 
         List<Diary> diaries = diaryService.getDiary(username, titlePrefix);

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetDiaryRequest {
     private String username;
-    private String titlePrefix;
+    private String title;
 }
