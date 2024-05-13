@@ -1,6 +1,9 @@
 package com.ymj.tourstudy.utils;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class SortUtils {
 
@@ -54,6 +57,44 @@ public class SortUtils {
         array[i + 1] = array[high];
         array[high] = temp;
         return i + 1;
+    }
+    /**
+     * 使用堆排序获取排序后的前n个元素。
+     *
+     * @param <T>        数组的数据类型。
+     * @param array      要排序的数组。
+     * @param n          要获取的前n个元素的数量。
+     * @param comparator 定义排序规则的比较器。
+     * @return 排序后的前n个元素。
+     */
+    public static <T> T[] getLastN(T[] array, int n, Comparator<T> comparator) {
+        PriorityQueue<T> maxHeap = new PriorityQueue<>(n, comparator);
+        for (T element : array) {
+            if (maxHeap.size() < n) {
+                maxHeap.offer(element);
+            } else {
+                // 如果新元素比堆顶元素小或者等于，那么将新元素加入堆中
+                if (comparator.compare(element, maxHeap.peek()) <= 0) {
+                    maxHeap.poll();
+                    maxHeap.offer(element);
+                }
+            }
+        }
+        T[] result = (T[]) Array.newInstance(array.getClass().getComponentType(), n);
+        for (int i = 0; i < n; i++) {
+            result[i] = maxHeap.poll();
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Integer[] array = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+
+        Integer[] top5 = getLastN(array, array.length, Comparator.reverseOrder());
+
+        quickSort(array, Comparator.naturalOrder());
+        System.out.println(Arrays.toString(array));
+        System.out.println(Arrays.toString(top5));
     }
 
 }
