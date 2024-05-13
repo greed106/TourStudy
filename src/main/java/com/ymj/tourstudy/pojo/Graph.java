@@ -10,6 +10,7 @@ import java.util.*;
 @AllArgsConstructor
 public class Graph {
     private Map<Point, List<Edge>> adjList;
+    private int[][] shortestDistances; // 存储所有点对之间的最短距离
 
     public Graph() {
         adjList = new HashMap<>();
@@ -93,6 +94,87 @@ public class Graph {
         }
     }
 
+    // 使用Floyd-Warshall算法计算所有点对的最短路径
+    public void computeAllPairsShortestPaths(List<Point> points) {
+        int numVertices = points.size();
+        shortestDistances = new int[numVertices][numVertices];
+
+        for (int i = 0; i < numVertices; i++) {
+            Arrays.fill(shortestDistances[i], Integer.MAX_VALUE / 2);
+            shortestDistances[i][i] = 0;
+        }
+
+        for (Point u : adjList.keySet()) {
+            int uIndex = points.indexOf(u);
+            for (Edge e : adjList.get(u)) {
+                int vIndex = points.indexOf(e.getDestination());
+                shortestDistances[uIndex][vIndex] = Math.min(shortestDistances[uIndex][vIndex], e.getWeight());
+            }
+        }
+
+        for (int k = 0; k < numVertices; k++) {
+            for (int i = 0; i < numVertices; i++) {
+                for (int j = 0; j < numVertices; j++) {
+                    if (shortestDistances[i][j] > shortestDistances[i][k] + shortestDistances[k][j]) {
+                        shortestDistances[i][j] = shortestDistances[i][k] + shortestDistances[k][j];
+                    }
+                }
+            }
+        }
+    }
+
+    // 使用动态规划求解TSP问题
+    public List<Point> shortestPathThroughAllPoints(List<Point> points) {
+        int n = points.size();
+        int[][] dp = new int[1 << n][n];
+        int[][] path = new int[1 << n][n];
+        int INF = Integer.MAX_VALUE / 2;
+
+        for (int[] row : dp) {
+            Arrays.fill(row, INF);
+        }
+        for (int i = 0; i < n; i++) {
+            dp[1 << i][i] = 0;
+        }
+
+        for (int mask = 0; mask < (1 << n); mask++) {
+            for (int end = 0; end < n; end++) {
+                if ((mask & (1 << end)) == 0) continue;
+                int prevMask = mask ^ (1 << end);
+                if (prevMask == 0) continue;
+                for (int next = 0; next < n; next++) {
+                    if ((mask & (1 << next)) == 0 || end == next) continue;
+                    if (dp[mask][end] > dp[prevMask][next] + shortestDistances[next][end]) {
+                        dp[mask][end] = dp[prevMask][next] + shortestDistances[next][end];
+                        path[mask][end] = next;
+                    }
+                }
+            }
+        }
+
+        // 重建路径
+        int last = (1 << n) - 1;
+        int minCost = INF;
+        int lastNode = -1;
+        for (int i = 0; i < n; i++) {
+            if (minCost > dp[last][i]) {
+                minCost = dp[last][i];
+                lastNode = i;
+            }
+        }
+
+        LinkedList<Point> shortestPath = new LinkedList<>();
+        int state = last;
+        while (state > 0) {
+            shortestPath.addFirst(points.get(lastNode));
+            int temp = lastNode;
+            lastNode = path[state][lastNode];
+            state = state ^ (1 << temp);
+        }
+
+        return shortestPath;
+    }
+
     public static void main(String[] args) {
         Graph graph = new Graph();
 
@@ -126,14 +208,12 @@ public class Graph {
         graph.addEdge(f, h, 3);
         graph.addEdge(a, j, 10);
 
-        // 测试从 A 到 J 的最短路径
-        System.out.println("Shortest path from A to J: " + graph.dijkstra(a, j));
+        List<Point> points = Arrays.asList(a, b, c, d, e, f, g, h, i, j);
+        graph.computeAllPairsShortestPaths(points);
 
-        // 测试从 G 到 E 的最短路径
-        System.out.println("Shortest path from G to E: " + graph.dijkstra(g, e));
+        // 测试TSP问题求解
+        System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(points));
 
-        // 测试从 D 到 J 的最短路径
-        System.out.println("Shortest path from D to J: " + graph.dijkstra(d, j));
     }
 
 }
