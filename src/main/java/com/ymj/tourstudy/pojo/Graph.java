@@ -172,7 +172,19 @@ public class Graph {
             state = state ^ (1 << temp);
         }
 
-        return shortestPath;
+        // 将起点再次加入路径中形成环
+        shortestPath.addLast(shortestPath.getFirst());
+
+        // 确保每一步都使用实际存在的边，修正最终路径
+        LinkedList<Point> finalPath = new LinkedList<>();
+        for (int i = 0; i < shortestPath.size() - 1; i++) {
+            List<Point> segment = dijkstra(shortestPath.get(i), shortestPath.get(i + 1));
+            // 去掉每段路径的重复起点
+            if (i > 0) segment.remove(0);
+            finalPath.addAll(segment);
+        }
+
+        return finalPath;
     }
 
     public static void main(String[] args) {
@@ -185,35 +197,21 @@ public class Graph {
         Point d = new Point(3, 0, 0, "D");
         Point e = new Point(4, 0, 0, "E");
         Point f = new Point(5, 0, 0, "F");
-        Point g = new Point(6, 0, 0, "G");
-        Point h = new Point(7, 0, 0, "H");
-        Point i = new Point(8, 0, 0, "I");
-        Point j = new Point(9, 0, 0, "J");
 
-        // 添加边，构造一个复杂的图
-        graph.addEdge(a, b, 4);
+        // 添加边
+        graph.addEdge(a, b, 1);
         graph.addEdge(a, c, 2);
-        graph.addEdge(b, c, 3);
-        graph.addEdge(b, d, 2);
-        graph.addEdge(b, e, 3);
-        graph.addEdge(c, d, 4);
-        graph.addEdge(c, e, 5);
-        graph.addEdge(d, e, 1);
-        graph.addEdge(d, f, 8);
-        graph.addEdge(e, f, 6);
-        graph.addEdge(g, h, 3);
-        graph.addEdge(h, i, 2);
-        graph.addEdge(i, j, 4);
-        graph.addEdge(g, j, 7);
-        graph.addEdge(f, h, 3);
-        graph.addEdge(a, j, 10);
+        graph.addEdge(a, d, 1);
+        graph.addEdge(b, d, 3);
+        graph.addEdge(b, f, 5);
+        graph.addEdge(c, d, 2);
+        graph.addEdge(d, e, 2);
+        graph.addEdge(e, f, 2);
 
-        List<Point> points = Arrays.asList(a, b, c, d, e, f, g, h, i, j);
+        List<Point> points = Arrays.asList(a, b, c, d, e, f);
         graph.computeAllPairsShortestPaths(points);
-
+        List<Point> p = Arrays.asList(e, d, f);
         // 测试TSP问题求解
-        System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(points));
-
+        System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(p));
     }
-
 }
