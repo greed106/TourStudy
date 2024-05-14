@@ -1,7 +1,5 @@
 package com.ymj.tourstudy.pojo;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -197,12 +195,10 @@ public class Graph {
         return finalPath;
     }
 
-    @JSONField(serialize = false)
     public Map<Point, List<Edge>> getAdjList() {
         return adjList;
     }
 
-    @JSONField(deserialize = false)
     public void setAdjList(Map<Point, List<Edge>> adjList) {
         this.adjList = adjList;
     }
