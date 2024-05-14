@@ -207,6 +207,10 @@ public class Graph {
         this.adjList = adjList;
     }
 
+    public List<Point> getAllPoints() {
+        return new ArrayList<>(adjList.keySet());
+    }
+
     public static void main(String[] args) {
         Graph graph = new Graph();
 
