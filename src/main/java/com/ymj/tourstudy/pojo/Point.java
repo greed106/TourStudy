@@ -14,6 +14,7 @@ public class Point {
     private int x;
     private int y;
     private String name;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -25,12 +26,14 @@ public class Point {
         Point point = (Point) obj;
         return index == point.index;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(index);
     }
+
     @Override
     public String toString() {
-        return String.format("[name=%s, index=%d, x=%d, y=%d]", name, index, x, y);
+        return String.format("Point[name=%s, index=%d, x=%d, y=%d]", name, index, x, y);
     }
 }

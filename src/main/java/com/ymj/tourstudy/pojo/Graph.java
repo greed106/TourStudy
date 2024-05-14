@@ -1,5 +1,12 @@
 package com.ymj.tourstudy.pojo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.ymj.tourstudy.serializer.PointKeyDeserializer;
+import com.ymj.tourstudy.serializer.PointKeySerializer;
 import com.ymj.tourstudy.utils.MyPriorityQueueMinHeap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +16,9 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class Graph {
+    private String name;
+    @JsonSerialize(keyUsing = PointKeySerializer.class)
+    @JsonDeserialize(keyUsing = PointKeyDeserializer.class)
     private Map<Point, List<Edge>> adjList;
     private int[][] shortestDistances; // 存储所有点对之间的最短距离
 
@@ -187,6 +197,16 @@ public class Graph {
         return finalPath;
     }
 
+    @JSONField(serialize = false)
+    public Map<Point, List<Edge>> getAdjList() {
+        return adjList;
+    }
+
+    @JSONField(deserialize = false)
+    public void setAdjList(Map<Point, List<Edge>> adjList) {
+        this.adjList = adjList;
+    }
+
     public static void main(String[] args) {
         Graph graph = new Graph();
 
@@ -213,5 +233,17 @@ public class Graph {
         List<Point> p = Arrays.asList(e, d, f);
         // 测试TSP问题求解
         System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(p));
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String g = mapper.writeValueAsString(graph);
+            System.out.println(g);
+            Graph graph1 = mapper.readValue(g, Graph.class);
+            System.out.println("Shortest path through all points: " + graph1.shortestPathThroughAllPoints(p));
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+//        System.out.println("Shortest path through all points: " + graph1.shortestPathThroughAllPoints(p));
     }
 }
