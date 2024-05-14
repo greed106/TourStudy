@@ -12,6 +12,7 @@ import com.ymj.tourstudy.utils.TrieTree;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class DiaryServiceImpl implements DiaryService {
         return new Diary(username, title, content,
                 createdTime, updatedTime, 0, 0, 0.0);
     }
+    @Transactional
     @Override
     public void uploadDiary(UploadDiaryRequest req) {
         // 创建Diary对象
@@ -54,8 +56,12 @@ public class DiaryServiceImpl implements DiaryService {
             diary.getUsername(),
             diary.getTitle(), compressedContent
         );
-
-        diaryMapper.setCompressedDiary(compressedDiary);
+        // 如果数据库中已经存在该日记，则更新
+        if(diaryMapper.getCompressedDiary(diary.getUsername(), diary.getTitle()) != null){
+            diaryMapper.updateCompressedDiary(diary.getUsername(), diary.getTitle(), compressedContent);
+        }else{
+            diaryMapper.setCompressedDiary(compressedDiary);
+        }
 
         String[] tags = req.getTags();
         if(tags == null || tags.length == 0){
