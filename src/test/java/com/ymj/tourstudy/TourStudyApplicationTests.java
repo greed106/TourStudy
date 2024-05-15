@@ -1,11 +1,14 @@
 package com.ymj.tourstudy;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymj.tourstudy.mapper.GraphMapper;
 import com.ymj.tourstudy.pojo.Graph;
 import com.ymj.tourstudy.pojo.JsonGraph;
 import com.ymj.tourstudy.pojo.Point;
+import com.ymj.tourstudy.pojo.TourMap;
+import com.ymj.tourstudy.utils.AVLTree;
 import com.ymj.tourstudy.utils.HuffmanResult;
 import com.ymj.tourstudy.utils.HuffmanUtils;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,8 @@ import java.util.List;
 class TourStudyApplicationTests {
     @Autowired
     GraphMapper graphMapper;
+    @Autowired
+    AVLTree<JsonGraph> avlTree;
 
     @Test
     void contextLoads() {
@@ -98,6 +103,16 @@ class TourStudyApplicationTests {
             System.out.println(p);
         }catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+    @Test
+    void testAVLTree(){
+        JsonGraph jsonGraph = avlTree.search("graph");
+        try {
+            TourMap map = jsonGraph.getMap();
+            System.out.println(map);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

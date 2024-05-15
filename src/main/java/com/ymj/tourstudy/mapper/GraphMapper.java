@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface GraphMapper {
     @Select("select * from tour_system.graph where name=#{name}")
@@ -14,4 +16,6 @@ public interface GraphMapper {
     void insertGraph(JsonGraph jsonGraph);
     @Update("update tour_system.graph set content=#{content}, picture=#{picture} where name=#{name}")
     void updateGraph(JsonGraph jsonGraph);
+    @Select("select * from tour_system.graph")
+    List<JsonGraph> getAllGraphs();
 }

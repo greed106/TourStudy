@@ -6,6 +6,7 @@ import com.ymj.tourstudy.pojo.Graph;
 import com.ymj.tourstudy.pojo.JsonGraph;
 import com.ymj.tourstudy.pojo.TourMap;
 import com.ymj.tourstudy.service.MapService;
+import com.ymj.tourstudy.utils.AVLTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class MapServiceImpl implements MapService {
     @Autowired
     private GraphMapper graphMapper;
+    @Autowired
+    private AVLTree<JsonGraph> graphTree;
     @Override
     public TourMap getMap(String name) {
-        JsonGraph jsonGraph = graphMapper.getGraphByName(name);
         try{
+            JsonGraph jsonGraph = graphTree.search(name);
             return jsonGraph.getMap();
         } catch (Exception e){
             e.printStackTrace();
