@@ -64,7 +64,7 @@ class TourStudyApplicationTests {
         graph.computeAllPairsShortestPaths(points);
         List<Point> p = Arrays.asList(e, d, f);
         // 测试TSP问题求解
-        System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(p));
+        System.out.println("Shortest path through all points: " + graph.getShortestPathThroughPoints(p));
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -75,7 +75,7 @@ class TourStudyApplicationTests {
             graphMapper.updateGraph(jsonGraph);
             JsonGraph j = graphMapper.getGraphByName("graph");
             Graph gr = j.getGraph();
-            System.out.println("Shortest path through all points: " + gr.shortestPathThroughAllPoints(p));
+            System.out.println("Shortest path through all points: " + gr.getShortestPathThroughPoints(p));
             System.out.println(g);
 //            System.out.println(g);
 //            Graph graph1 = mapper.readValue(g, Graph.class);
@@ -87,20 +87,28 @@ class TourStudyApplicationTests {
 
     @Test
     void testJsonGraph(){
-        String path = "D:/PycharmProjects/TourStudy/graph.json";
-
+        String path = "C:/Users/ymj/Desktop/graph.json";
+        String picturePath = "C:/Users/ymj/Desktop/picture.txt";
         try{
             File file = new File(path);
+            File pic = new File(picturePath);
             String json = new String(Files.readAllBytes(file.toPath()));
+            String picture = new String(Files.readAllBytes(pic.toPath()));
             ObjectMapper mapper = new ObjectMapper();
             Graph graph = mapper.readValue(json, Graph.class);
+            graph.setName("BNU");
+            JsonGraph jsonGraph = new JsonGraph("BNU", json, picture);
+            graphMapper.insertGraph(jsonGraph);
             System.out.println(graph);
-            List<Point> q = graph.getAllPoints();
-            q.remove(0);
-            q.remove(1);
-            System.out.println(q);
-            List<Point> p = graph.shortestPathThroughAllPoints(q);
-            System.out.println(p);
+            JsonGraph j = graphMapper.getGraphByName("BNU");
+            List<Point> q = j.getGraph().getAllPoints();
+            // 输出点的数量
+            System.out.println("q.size() " + q.size());
+//            q.remove(0);
+//            q.remove(1);
+//            System.out.println(q);
+//            List<Point> p = graph.shortestPathThroughAllPoints(q);
+//            System.out.println(p);
         }catch(Exception e) {
             e.printStackTrace();
         }

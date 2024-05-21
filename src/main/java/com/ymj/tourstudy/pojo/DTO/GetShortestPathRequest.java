@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagRequest {
-    private String tagName;
-    private String dataName;
+public class GetShortestPathRequest {
+    private String name;
+    private Integer[] indexes;
 }

@@ -132,7 +132,7 @@ public class Graph {
     }
 
     // 使用动态规划求解TSP问题
-    public List<Point> shortestPathThroughAllPoints(List<Point> points) {
+    public List<Point> getShortestPathThroughPoints(List<Point> points) {
         int n = points.size();
         int[][] dp = new int[1 << n][n];
         int[][] path = new int[1 << n][n];
@@ -207,6 +207,18 @@ public class Graph {
         return new ArrayList<>(adjList.keySet());
     }
 
+    public List<Point> getPointsByIndexes(Integer[] indexes) {
+        List<Point> points = new ArrayList<>();
+        for (Integer index : indexes) {
+            for (Point point : adjList.keySet()) {
+                if (point.getIndex() == index) {
+                    points.add(point);
+                    break;
+                }
+            }
+        }
+        return points;
+    }
     public static void main(String[] args) {
         Graph graph = new Graph();
 
@@ -232,14 +244,14 @@ public class Graph {
         graph.computeAllPairsShortestPaths(points);
         List<Point> p = Arrays.asList(e, d, f);
         // 测试TSP问题求解
-        System.out.println("Shortest path through all points: " + graph.shortestPathThroughAllPoints(p));
+        System.out.println("Shortest path through all points: " + graph.getShortestPathThroughPoints(p));
 
         ObjectMapper mapper = new ObjectMapper();
         try {
             String g = mapper.writeValueAsString(graph);
             System.out.println(g);
             Graph graph1 = mapper.readValue(g, Graph.class);
-            System.out.println("Shortest path through all points: " + graph1.shortestPathThroughAllPoints(p));
+            System.out.println("Shortest path through all points: " + graph1.getShortestPathThroughPoints(p));
         } catch (Exception e1) {
             e1.printStackTrace();
         }
