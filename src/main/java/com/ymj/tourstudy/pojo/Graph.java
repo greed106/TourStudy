@@ -219,6 +219,27 @@ public class Graph {
         }
         return points;
     }
+
+    public Point getPointByIndex(int index) {
+        for (Point point : adjList.keySet()) {
+            if (point.getIndex() == index) {
+                return point;
+            }
+        }
+        return null;
+    }
+
+    public List<Point> getNearestPoints(int index, int length) {
+        List<Point> points = new ArrayList<>();
+        // 使用shortestDistances获取point所有可达的点中距离小于等于length的点
+
+        for (int i = 0; i < shortestDistances[index].length; i++) {
+            if (shortestDistances[index][i] <= length) {
+                points.add(getPointByIndex(i));
+            }
+        }
+        return points;
+    }
     public static void main(String[] args) {
         Graph graph = new Graph();
 

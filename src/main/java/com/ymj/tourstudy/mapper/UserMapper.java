@@ -4,6 +4,7 @@ import com.ymj.tourstudy.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -28,5 +29,7 @@ public interface UserMapper {
 
     @Select("select * from tour_system.user_info where username=#{username} and password=#{password}")
     User getUserByUsernameAndPassword(@Param("username")String username, @Param("password")String password);
+    @Select("select username from tour_system.user_info")
+    List<String> getAllUsernames();
 
 }

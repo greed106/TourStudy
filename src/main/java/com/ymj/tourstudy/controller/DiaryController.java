@@ -1,8 +1,7 @@
 package com.ymj.tourstudy.controller;
 
 
-import com.ymj.tourstudy.pojo.DTO.GetDiaryRequest;
-import com.ymj.tourstudy.pojo.DTO.UploadDiaryRequest;
+import com.ymj.tourstudy.pojo.DTO.*;
 import com.ymj.tourstudy.pojo.Diary;
 import com.ymj.tourstudy.pojo.Result;
 import com.ymj.tourstudy.service.DiaryService;
@@ -40,5 +39,37 @@ public class DiaryController {
         List<Diary> diaries = diaryService.getDiary(username, titlePrefix);
 
         return Result.success(diaries);
+    }
+
+    @PostMapping("/tour/diary/add_page_views")
+    public Result addPageViews(@RequestBody AddPageViewsRequest request){
+        String username = request.getUsername();
+        String title = request.getTitle();
+        log.info("增加日记浏览量请求："+username+" "+title);
+
+        diaryService.addPageViews(username, title);
+
+        return Result.success();
+    }
+
+    @PostMapping("/tour/diary/get_sorted_diary")
+    public Result getSortedDiary(@RequestBody GetSortedDiaryRequest request){
+        log.info("获取排序后的日记请求："+request);
+
+        List<Diary> diaries = diaryService.getSortedDiary(request);
+
+        return Result.success(diaries);
+    }
+
+    @PostMapping("/tour/diary/add_score")
+    public Result addScore(@RequestBody AddScoreRequest request){
+        String username = request.getUsername();
+        String title = request.getTitle();
+        Integer score = request.getScore();
+        log.info("增加日记评分请求："+username+" "+title+" "+score);
+
+        diaryService.addScore(username, title, score);
+
+        return Result.success();
     }
 }

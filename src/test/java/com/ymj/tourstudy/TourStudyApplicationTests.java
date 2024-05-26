@@ -87,7 +87,7 @@ class TourStudyApplicationTests {
 
     @Test
     void testJsonGraph(){
-        String path = "C:/Users/ymj/Desktop/graph.json";
+        String path = "C:/Users/ymj/Desktop/graph(4).json";
         String picturePath = "C:/Users/ymj/Desktop/picture.txt";
         try{
             File file = new File(path);
@@ -96,11 +96,11 @@ class TourStudyApplicationTests {
             String picture = new String(Files.readAllBytes(pic.toPath()));
             ObjectMapper mapper = new ObjectMapper();
             Graph graph = mapper.readValue(json, Graph.class);
-            graph.setName("BNU");
-            JsonGraph jsonGraph = new JsonGraph("BNU", json, picture);
+            graph.setName("scene");
+            JsonGraph jsonGraph = new JsonGraph("scene", json, picture);
             graphMapper.insertGraph(jsonGraph);
-            System.out.println(graph);
-            JsonGraph j = graphMapper.getGraphByName("BNU");
+//            System.out.println(graph);
+            JsonGraph j = graphMapper.getGraphByName("scene");
             List<Point> q = j.getGraph().getAllPoints();
             // 输出点的数量
             System.out.println("q.size() " + q.size());
