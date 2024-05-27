@@ -74,7 +74,7 @@ public class DiaryServiceImpl implements DiaryService {
             return;
         }
         for(String tag : tags){
-            tagMapper.setDiaryTag(tag, key);
+            tagMapper.insertDiaryTag(tag, key);
         }
     }
 

@@ -1,9 +1,12 @@
 package com.ymj.tourstudy.utils;
 
+import lombok.Data;
+
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+@Data
 public class MyHashMap<K, V> {
     private static class Entry<K, V> {
         K key;

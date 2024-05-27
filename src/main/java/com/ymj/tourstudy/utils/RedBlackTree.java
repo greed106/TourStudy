@@ -1,5 +1,10 @@
 package com.ymj.tourstudy.utils;
 
+import lombok.Data;
+
+import java.util.List;
+
+@Data
 public class RedBlackTree<T> {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
@@ -174,6 +179,31 @@ public class RedBlackTree<T> {
         if (isRed(node.left) && isRed(node.right)) flipColors(node);
         return node;
     }
+
+    protected void collectKeys(Node node, List<String> keysList) {
+        if (node != null) {
+            collectKeys(node.left, keysList);
+            keysList.add(node.key);
+            collectKeys(node.right, keysList);
+        }
+    }
+
+    protected void collectValues(Node node, List<T> valuesList) {
+        if (node != null) {
+            collectValues(node.left, valuesList);
+            valuesList.add(node.value);
+            collectValues(node.right, valuesList);
+        }
+    }
+
+    public boolean isEmpty() {
+        return root == null;
+    }
+
+    public void clear() {
+        root = null;
+    }
+
 
     public static void main(String[] args) {
         RedBlackTree<Integer> rbTree = new RedBlackTree<>();
