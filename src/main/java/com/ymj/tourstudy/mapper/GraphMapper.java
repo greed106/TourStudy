@@ -27,4 +27,6 @@ public interface GraphMapper {
     JsonCrowdedGraph getCrowdedGraphByName(String name);
     @Select("select * from tour_system.crowded_graph")
     List<JsonCrowdedGraph> getAllCrowdedGraphs();
+    @Select("select name from tour_system.graph")
+    List<String> getGraphNames();
 }

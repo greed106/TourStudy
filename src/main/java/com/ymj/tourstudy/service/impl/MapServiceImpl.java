@@ -76,4 +76,21 @@ public class MapServiceImpl implements MapService {
         }
         throw new NotFoundException("Shortest path not found");
     }
+
+    @Override
+    public List<Point> getNearestPoints(String name, Integer index, Integer length) {
+        try{
+            JsonGraph jsonGraph = graphTree.search(name);
+            Graph graph = jsonGraph.getGraph();
+            return graph.getNearestPoints(index, length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new NotFoundException("Nearest points not found");
+    }
+
+    @Override
+    public List<String> getMapNames() {
+        return graphMapper.getGraphNames();
+    }
 }

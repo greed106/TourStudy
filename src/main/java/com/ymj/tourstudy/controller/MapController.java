@@ -2,6 +2,7 @@ package com.ymj.tourstudy.controller;
 
 import com.ymj.tourstudy.pojo.CrowdedEdge;
 import com.ymj.tourstudy.pojo.DTO.GetMapRequest;
+import com.ymj.tourstudy.pojo.DTO.GetNearestPointsRequest;
 import com.ymj.tourstudy.pojo.DTO.GetShortestPathRequest;
 import com.ymj.tourstudy.pojo.Point;
 import com.ymj.tourstudy.pojo.Result;
@@ -49,5 +50,19 @@ public class MapController {
         log.info("请求获取拥挤边: {}", request.getName());
         List<List<CrowdedEdge>> crowdedEdges = mapService.getCrowdedEdges(request.getName());
         return Result.success(crowdedEdges);
+    }
+
+    @PostMapping("/tour/map/get_nearest_points")
+    public Result getNearestPoints(@RequestBody GetNearestPointsRequest req) {
+        log.info("请求获取最近点: {}", req.getName());
+        List<Point> nearestPoints = mapService.getNearestPoints(req.getName(), req.getIndex(), req.getLength());
+        return Result.success(nearestPoints);
+    }
+
+    @PostMapping("/tour/map/get_map_names")
+    public Result getMapNames() {
+        log.info("请求获取地图名称");
+        List<String> mapNames = mapService.getMapNames();
+        return Result.success(mapNames);
     }
 }

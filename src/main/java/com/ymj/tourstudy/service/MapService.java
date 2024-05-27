@@ -12,4 +12,6 @@ public interface MapService {
      List<Point> getShortestPath(String name, Integer[] indexes);
      List<List<CrowdedEdge>> getCrowdedEdges(String name);
      List<Point> getCrowdedShortestPath(String name, Integer[] indexes);
+     List<Point> getNearestPoints(String name, Integer index, Integer length);
+     List<String> getMapNames();
 }

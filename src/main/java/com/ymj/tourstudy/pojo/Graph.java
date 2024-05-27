@@ -241,7 +241,8 @@ public class Graph {
 
         for (int i = 0; i < shortestDistances[index].length; i++) {
             if (shortestDistances[index][i] <= length) {
-                points.add(getPointByIndex(i));
+                if(i != index)
+                    points.add(getPointByIndex(i));
             }
         }
         return points;
