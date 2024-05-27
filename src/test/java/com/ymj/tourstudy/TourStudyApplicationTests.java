@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymj.tourstudy.mapper.GraphMapper;
-import com.ymj.tourstudy.pojo.Graph;
-import com.ymj.tourstudy.pojo.JsonGraph;
-import com.ymj.tourstudy.pojo.Point;
-import com.ymj.tourstudy.pojo.TourMap;
+import com.ymj.tourstudy.pojo.*;
 import com.ymj.tourstudy.utils.AVLTree;
 import com.ymj.tourstudy.utils.HuffmanResult;
 import com.ymj.tourstudy.utils.HuffmanUtils;
+import com.ymj.tourstudy.utils.RedBlackTree;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +24,8 @@ class TourStudyApplicationTests {
     GraphMapper graphMapper;
     @Autowired
     AVLTree<JsonGraph> avlTree;
+    @Autowired
+    RedBlackTree<CrowdedGraph> redBlackTree;
 
     @Test
     void contextLoads() {
@@ -122,6 +122,25 @@ class TourStudyApplicationTests {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void testCrowdedGraph(){
+        JsonGraph jsonGraph = avlTree.search("BNU");
+        try {
+            Graph graph = jsonGraph.getGraph();
+            CrowdedGraph crowdedGraph = new CrowdedGraph(graph);
+            JsonCrowdedGraph jsonCrowdedGraph = new JsonCrowdedGraph(crowdedGraph);
+            graphMapper.insertCrowdedGraph(jsonCrowdedGraph);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void testCrowdedGraphSearch(){
+        CrowdedGraph crowdedGraph = redBlackTree.search("BNU");
+        System.out.println(Arrays.deepToString(crowdedGraph.getCrowdedness()));
     }
 
 }

@@ -14,14 +14,20 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class Graph {
-    private String name;
+    protected String name;
     @JsonSerialize(keyUsing = PointKeySerializer.class)
     @JsonDeserialize(keyUsing = PointKeyDeserializer.class)
-    private Map<Point, List<Edge>> adjList;
-    private int[][] shortestDistances; // 存储所有点对之间的最短距离
+    protected Map<Point, List<Edge>> adjList;
+    protected int[][] shortestDistances; // 存储所有点对之间的最短距离
 
     public Graph() {
         adjList = new HashMap<>();
+    }
+
+    public Graph(Graph graph) {
+        this.name = graph.getName();
+        this.adjList = new HashMap<>(graph.getAdjList());
+        this.shortestDistances = graph.shortestDistances;
     }
 
     public void addVertex(Point point) {

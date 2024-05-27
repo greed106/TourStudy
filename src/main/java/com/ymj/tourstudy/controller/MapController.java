@@ -1,5 +1,6 @@
 package com.ymj.tourstudy.controller;
 
+import com.ymj.tourstudy.pojo.CrowdedEdge;
 import com.ymj.tourstudy.pojo.DTO.GetMapRequest;
 import com.ymj.tourstudy.pojo.DTO.GetShortestPathRequest;
 import com.ymj.tourstudy.pojo.Point;
@@ -34,5 +35,19 @@ public class MapController {
         log.info("请求获取最短路径: {}", request);
         List<Point> path = mapService.getShortestPath(request.getName(), request.getIndexes());
         return Result.success(path);
+    }
+
+    @PostMapping("/tour/map/get_crowded_shortest_path")
+    public Result getCrowdedShortestPath(@RequestBody GetShortestPathRequest request) {
+        log.info("请求获取最短路径: {}", request);
+        List<Point> path = mapService.getCrowdedShortestPath(request.getName(), request.getIndexes());
+        return Result.success(path);
+    }
+
+    @PostMapping("/tour/map/get_crowded_edges")
+    public Result getCrowdedEdges(@RequestBody GetMapRequest request) {
+        log.info("请求获取拥挤边: {}", request.getName());
+        List<List<CrowdedEdge>> crowdedEdges = mapService.getCrowdedEdges(request.getName());
+        return Result.success(crowdedEdges);
     }
 }

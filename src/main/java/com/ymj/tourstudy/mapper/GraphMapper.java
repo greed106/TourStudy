@@ -1,5 +1,6 @@
 package com.ymj.tourstudy.mapper;
 
+import com.ymj.tourstudy.pojo.JsonCrowdedGraph;
 import com.ymj.tourstudy.pojo.JsonGraph;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +19,12 @@ public interface GraphMapper {
     void updateGraph(JsonGraph jsonGraph);
     @Select("select * from tour_system.graph")
     List<JsonGraph> getAllGraphs();
+    @Insert("insert into tour_system.crowded_graph(name, content, crowdedness) values(#{name}, #{content}, #{crowdedness})")
+    void insertCrowdedGraph(JsonCrowdedGraph jsonCrowdedGraph);
+    @Update("update tour_system.crowded_graph set content=#{content}, crowdedness=#{crowdedness} where name=#{name}")
+    void updateCrowdedGraph(JsonCrowdedGraph jsonCrowdedGraph);
+    @Select("select * from tour_system.crowded_graph where name=#{name}")
+    JsonCrowdedGraph getCrowdedGraphByName(String name);
+    @Select("select * from tour_system.crowded_graph")
+    List<JsonCrowdedGraph> getAllCrowdedGraphs();
 }
