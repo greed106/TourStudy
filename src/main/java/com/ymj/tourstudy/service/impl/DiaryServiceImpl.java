@@ -6,14 +6,12 @@ import com.ymj.tourstudy.mapper.DiaryMapper;
 import com.ymj.tourstudy.mapper.TagMapper;
 import com.ymj.tourstudy.mapper.UserMapper;
 import com.ymj.tourstudy.pojo.CompressedDiary;
+import com.ymj.tourstudy.pojo.DTO.GetMatchDiaryRequest;
 import com.ymj.tourstudy.pojo.DTO.GetSortedDiaryRequest;
 import com.ymj.tourstudy.pojo.DTO.UploadDiaryRequest;
 import com.ymj.tourstudy.pojo.Diary;
 import com.ymj.tourstudy.service.DiaryService;
-import com.ymj.tourstudy.utils.HuffmanResult;
-import com.ymj.tourstudy.utils.HuffmanUtils;
-import com.ymj.tourstudy.utils.SortUtils;
-import com.ymj.tourstudy.utils.TrieTree;
+import com.ymj.tourstudy.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -148,5 +146,21 @@ public class DiaryServiceImpl implements DiaryService {
         );
 
         diaryMapper.updateCompressedDiary(username, title, compressedContent);
+    }
+
+    @Override
+    public List<Diary> getMatchedDiary(GetMatchDiaryRequest req) {
+        List<String> keys = userMapper.getAllUsernames();
+        List<Diary> diaries = new ArrayList<>();
+        for(String username : keys){
+            List<Diary> userDiaries = getDiary(username, "");
+            for(Diary diary : userDiaries){
+                int index = MatchUtils.bmMatch(req.getKeyword(), diary.getContent());
+                if(index != -1){
+                    diaries.add(diary);
+                }
+            }
+        }
+        return diaries;
     }
 }

@@ -72,4 +72,13 @@ public class DiaryController {
 
         return Result.success();
     }
+
+    @PostMapping("/tour/diary/get_matched_diary")
+    public Result getMatchDiary(@RequestBody GetMatchDiaryRequest request){
+        log.info("获取匹配日记请求："+request);
+
+        List<Diary> diaries = diaryService.getMatchedDiary(request);
+
+        return Result.success(diaries);
+    }
 }
