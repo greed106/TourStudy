@@ -1,5 +1,7 @@
 package com.ymj.tourstudy.utils;
 
+import java.util.*;
+
 /**
  * 字符串匹配工具类,实现 Boyer-Moore 算法
  */
@@ -118,6 +120,83 @@ public class MatchUtils {
         }
         return len;
     }
+    /**
+     * AC自动机实现
+     */
+    private static class ACAutomaton {
+        private class Node {
+            Map<Character, Node> children = new HashMap<>();
+            Node fail;
+            Set<String> output = new HashSet<>();
+        }
+
+        private Node root;
+
+        public ACAutomaton(List<String> patterns) {
+            root = new Node();
+            buildTrie(patterns);
+            buildFailureLinks();
+        }
+
+        private void buildTrie(List<String> patterns) {
+            for (String pattern : patterns) {
+                Node node = root;
+                for (char c : pattern.toCharArray()) {
+                    node = node.children.computeIfAbsent(c, k -> new Node());
+                }
+                node.output.add(pattern);
+            }
+        }
+
+        private void buildFailureLinks() {
+            Queue<Node> queue = new LinkedList<>();
+            for (Node node : root.children.values()) {
+                node.fail = root;
+                queue.add(node);
+            }
+
+            while (!queue.isEmpty()) {
+                Node current = queue.poll();
+                for (Map.Entry<Character, Node> entry : current.children.entrySet()) {
+                    char c = entry.getKey();
+                    Node child = entry.getValue();
+                    Node fail = current.fail;
+                    while (fail != null && !fail.children.containsKey(c)) {
+                        fail = fail.fail;
+                    }
+                    if (fail == null) {
+                        child.fail = root;
+                    } else {
+                        child.fail = fail.children.get(c);
+                        child.output.addAll(child.fail.output);
+                    }
+                    queue.add(child);
+                }
+            }
+        }
+
+        public boolean search(String target) {
+            Node node = root;
+            for (char c : target.toCharArray()) {
+                while (node != null && !node.children.containsKey(c)) {
+                    node = node.fail;
+                }
+                if (node == null) {
+                    node = root;
+                } else {
+                    node = node.children.get(c);
+                    if (!node.output.isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+    static boolean acAutomatonMatch(String target, List<String> patterns) {
+        ACAutomaton acAutomaton = new ACAutomaton(patterns);
+        return acAutomaton.search(target);
+    }
     public static void main(String[] args){
         // 测试用例1: 模式串存在于目标字符串中
         String pattern1 = "cde";
@@ -154,5 +233,14 @@ public class MatchUtils {
         String target6 = "abcdefgh";
         int result6 = MatchUtils.bmMatch(pattern6, target6);
         System.out.println("测试用例6: " + result6); // 预期输出: -1
+
+        // 测试AC自动机
+        List<String> patterns = Arrays.asList("he", "she", "his", "hers");
+        String target7 = "ahishers";
+        boolean result7 = MatchUtils.acAutomatonMatch(target7, patterns);
+        System.out.println("测试用例7: " + result7); // 预期输出: true
+        String target8 = "abcdefg";
+        boolean result8 = MatchUtils.acAutomatonMatch(target8, patterns);
+        System.out.println("测试用例8: " + result8); // 预期输出: false
     }
 }
