@@ -193,54 +193,110 @@ public class MatchUtils {
             return false;
         }
     }
-    static boolean acAutomatonMatch(String target, List<String> patterns) {
+    static public boolean acAutomatonMatch(List<String> patterns, String target) {
         ACAutomaton acAutomaton = new ACAutomaton(patterns);
         return acAutomaton.search(target);
+    }
+    public static int kmpMatch(String pattern, String target) {
+        if(pattern.isEmpty()) {
+            return 0;
+        }
+        int[] lps = buildLPSArray(pattern);
+        int i = 0, j = 0;
+        int targetLen = target.length();
+        int patternLen = pattern.length();
+
+        while (i < targetLen) {
+            if (pattern.charAt(j) == target.charAt(i)) {
+                i++;
+                j++;
+            }
+            if (j == patternLen) {
+                return i - j; // 找到匹配
+            } else if (i < targetLen && pattern.charAt(j) != target.charAt(i)) {
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    i++;
+                }
+            }
+        }
+        return -1; // 未找到匹配
+    }
+
+    /**
+     * 构建部分匹配表（LPS数组）
+     *
+     * @param pattern 模式串
+     * @return 部分匹配表（LPS数组）
+     */
+    private static int[] buildLPSArray(String pattern) {
+        int patternLen = pattern.length();
+        int[] lps = new int[patternLen];
+        int length = 0;
+        int i = 1;
+        lps[0] = 0;
+
+        while (i < patternLen) {
+            if (pattern.charAt(i) == pattern.charAt(length)) {
+                length++;
+                lps[i] = length;
+                i++;
+            } else {
+                if (length != 0) {
+                    length = lps[length - 1];
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+        return lps;
     }
     public static void main(String[] args){
         // 测试用例1: 模式串存在于目标字符串中
         String pattern1 = "cde";
         String target1 = "abcdefgabcijk";
-        int result1 = MatchUtils.bmMatch(pattern1, target1);
+        int result1 = MatchUtils.kmpMatch(pattern1, target1);
         System.out.println("测试用例1: " + result1); // 预期输出: 2
 
         // 测试用例2: 模式串不存在于目标字符串中
         String pattern2 = "xyz";
         String target2 = "abcdefgh";
-        int result2 = MatchUtils.bmMatch(pattern2, target2);
+        int result2 = MatchUtils.kmpMatch(pattern2, target2);
         System.out.println("测试用例2: " + result2); // 预期输出: -1
 
         // 测试用例3: 模式串为空字符串
         String pattern3 = "";
         String target3 = "abcdefgh";
-        int result3 = MatchUtils.bmMatch(pattern3, target3);
+        int result3 = MatchUtils.kmpMatch(pattern3, target3);
         System.out.println("测试用例3: " + result3); // 预期输出: 0
 
         // 测试用例4: 目标字符串为空字符串
         String pattern4 = "abc";
         String target4 = "";
-        int result4 = MatchUtils.bmMatch(pattern4, target4);
+        int result4 = MatchUtils.kmpMatch(pattern4, target4);
         System.out.println("测试用例4: " + result4); // 预期输出: -1
 
         // 测试用例5: 模式串和目标字符串相同
         String pattern5 = "abcdefgh";
         String target5 = "abcdefgh";
-        int result5 = MatchUtils.bmMatch(pattern5, target5);
+        int result5 = MatchUtils.kmpMatch(pattern5, target5);
         System.out.println("测试用例5: " + result5); // 预期输出: 0
 
         // 测试用例6: 模式串长度大于目标字符串长度
         String pattern6 = "abcdefghijklmn";
         String target6 = "abcdefgh";
-        int result6 = MatchUtils.bmMatch(pattern6, target6);
+        int result6 = MatchUtils.kmpMatch(pattern6, target6);
         System.out.println("测试用例6: " + result6); // 预期输出: -1
 
         // 测试AC自动机
         List<String> patterns = Arrays.asList("he", "she", "his", "hers");
         String target7 = "ahishers";
-        boolean result7 = MatchUtils.acAutomatonMatch(target7, patterns);
+        boolean result7 = MatchUtils.acAutomatonMatch(patterns, target7);
         System.out.println("测试用例7: " + result7); // 预期输出: true
         String target8 = "abcdefg";
-        boolean result8 = MatchUtils.acAutomatonMatch(target8, patterns);
+        boolean result8 = MatchUtils.acAutomatonMatch(patterns, target8);
         System.out.println("测试用例8: " + result8); // 预期输出: false
     }
 }

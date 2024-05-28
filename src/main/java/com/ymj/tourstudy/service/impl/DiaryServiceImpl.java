@@ -155,8 +155,10 @@ public class DiaryServiceImpl implements DiaryService {
         for(String username : keys){
             List<Diary> userDiaries = getDiary(username, "");
             for(Diary diary : userDiaries){
-                int index = MatchUtils.bmMatch(req.getKeyword(), diary.getContent());
-                if(index != -1){
+                int patternSize = req.getKeyword().size();
+                if(patternSize == 1 && MatchUtils.bmMatch(req.getKeyword().get(0), diary.getContent()) != -1){
+                    diaries.add(diary);
+                }else if(patternSize > 1 && MatchUtils.acAutomatonMatch(req.getKeyword(), diary.getContent())){
                     diaries.add(diary);
                 }
             }
