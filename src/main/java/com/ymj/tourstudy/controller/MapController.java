@@ -1,12 +1,7 @@
 package com.ymj.tourstudy.controller;
 
-import com.ymj.tourstudy.pojo.CrowdedEdge;
-import com.ymj.tourstudy.pojo.DTO.GetMapRequest;
-import com.ymj.tourstudy.pojo.DTO.GetNearestPointsRequest;
-import com.ymj.tourstudy.pojo.DTO.GetShortestPathRequest;
-import com.ymj.tourstudy.pojo.Point;
-import com.ymj.tourstudy.pojo.Result;
-import com.ymj.tourstudy.pojo.TourMap;
+import com.ymj.tourstudy.pojo.*;
+import com.ymj.tourstudy.pojo.DTO.*;
 import com.ymj.tourstudy.service.MapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +56,36 @@ public class MapController {
 
     @PostMapping("/tour/map/get_map_names")
     public Result getMapNames() {
-        log.info("请求获取地图名称");
+        log.info("请求获取所有地图名称");
         List<String> mapNames = mapService.getMapNames();
         return Result.success(mapNames);
+    }
+
+    @PostMapping("/tour/map/get_all_tourism")
+    public Result getAllTourism() {
+        log.info("请求获取所有旅游景点");
+        List<Tourism> tourism = mapService.getAllTourism();
+        return Result.success(tourism);
+    }
+
+    @PostMapping("/tour/map/get_tourism")
+    public Result getTourismByName(@RequestBody GetMapRequest request) {
+        log.info("请求获取旅游景点: {}", request.getName());
+        Tourism tourism = mapService.getTourismByName(request.getName());
+        return Result.success(tourism);
+    }
+
+    @PostMapping("/tour/map/add_score")
+    public Result addScore(@RequestBody AddTourismScoreRequest req) {
+        log.info("请求添加评分: {}", req);
+        mapService.addScore(req);
+        return Result.success();
+    }
+
+    @PostMapping("/tour/map/add_page_views")
+    public Result addPageViews(@RequestBody AddTourismPageViewsRequest request) {
+        log.info("请求添加浏览量: {}", request.getName());
+        mapService.addPageViews(request.getName());
+        return Result.success();
     }
 }

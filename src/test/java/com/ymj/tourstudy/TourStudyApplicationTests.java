@@ -143,4 +143,10 @@ class TourStudyApplicationTests {
         System.out.println(Arrays.deepToString(crowdedGraph.getCrowdedness()));
     }
 
+    @Test
+    void testTourism(){
+        Tourism tourism = new Tourism("BNU", "BNU", "Beijing Normal University (BNU) grew out of the Education Department of Imperial University of Peking established in 1902, which initiated teacher training in China’s higher education. After the development for over a century, BNU has become a comprehensive and research-intensive university with its main characteristics of basic disciplines in sciences and humanities, teacher education and educational science.\nBNU consists of Beijing Campus and Zhuhai Campus. The University has 3 faculties, 27 schools, 2 departments, 11 research institutes and 4 academies. In addition, there are more than 5.4 million books and 8.2 million e-books in its libraries.BNU is home to more than 35,000 full-time students, and has more than 8000 faculty members, including 2562 full-time teachers, 94% of whom have earned a doctoral degree.", 1, 1, 10.0);
+        graphMapper.updateTourism(tourism);
+    }
+
 }

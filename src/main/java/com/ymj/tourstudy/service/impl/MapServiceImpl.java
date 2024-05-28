@@ -4,8 +4,10 @@ import com.ymj.tourstudy.exception.NotFoundException;
 import com.ymj.tourstudy.exception.ParseMapException;
 import com.ymj.tourstudy.mapper.GraphMapper;
 import com.ymj.tourstudy.pojo.*;
+import com.ymj.tourstudy.pojo.DTO.AddTourismScoreRequest;
 import com.ymj.tourstudy.service.MapService;
 import com.ymj.tourstudy.utils.AVLTree;
+import com.ymj.tourstudy.utils.BinarySearchTree;
 import com.ymj.tourstudy.utils.RedBlackTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class MapServiceImpl implements MapService {
     private AVLTree<JsonGraph> graphTree;
     @Autowired
     private RedBlackTree<CrowdedGraph> crowdedGraphTree;
+    @Autowired
+    private BinarySearchTree<Tourism> tourismTree;
     @Override
     public TourMap getMap(String name) {
         try{
@@ -92,5 +96,39 @@ public class MapServiceImpl implements MapService {
     @Override
     public List<String> getMapNames() {
         return graphMapper.getGraphNames();
+    }
+
+    @Override
+    public List<Tourism> getAllTourism() {
+        return graphMapper.getAllTourism();
+    }
+
+    @Override
+    public Tourism getTourismByName(String name) {
+        return tourismTree.search(name);
+    }
+
+    @Override
+    public void addScore(AddTourismScoreRequest req) {
+        Tourism tourism = tourismTree.search(req.getName());
+        if(tourism == null){
+            throw new NotFoundException("Tourism not found");
+        }
+        double baseScore = tourism.getScore();
+        int ratings = tourism.getRatings();
+        double newScore = (baseScore * ratings + req.getScore()) / (ratings + 1);
+        tourism.setScore(newScore);
+        tourism.setRatings(ratings + 1);
+        graphMapper.updateTourism(tourism);
+    }
+
+    @Override
+    public void addPageViews(String name) {
+        Tourism tourism = tourismTree.search(name);
+        if(tourism == null){
+            throw new NotFoundException("Tourism not found");
+        }
+        tourism.setViews(tourism.getViews() + 1);
+        graphMapper.updateTourism(tourism);
     }
 }

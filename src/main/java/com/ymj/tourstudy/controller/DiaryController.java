@@ -42,7 +42,7 @@ public class DiaryController {
     }
 
     @PostMapping("/tour/diary/add_page_views")
-    public Result addPageViews(@RequestBody AddPageViewsRequest request){
+    public Result addPageViews(@RequestBody AddDiaryPageViewsRequest request){
         String username = request.getUsername();
         String title = request.getTitle();
         log.info("增加日记浏览量请求："+username+" "+title);
@@ -62,7 +62,7 @@ public class DiaryController {
     }
 
     @PostMapping("/tour/diary/add_score")
-    public Result addScore(@RequestBody AddScoreRequest request){
+    public Result addScore(@RequestBody AddDiaryScoreRequest request){
         String username = request.getUsername();
         String title = request.getTitle();
         Integer score = request.getScore();

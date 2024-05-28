@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPageViewsRequest {
+public class AddDiaryPageViewsRequest {
     private String username;
     private String title;
 }

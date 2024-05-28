@@ -2,6 +2,7 @@ package com.ymj.tourstudy.mapper;
 
 import com.ymj.tourstudy.pojo.JsonCrowdedGraph;
 import com.ymj.tourstudy.pojo.JsonGraph;
+import com.ymj.tourstudy.pojo.Tourism;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -29,4 +30,12 @@ public interface GraphMapper {
     List<JsonCrowdedGraph> getAllCrowdedGraphs();
     @Select("select name from tour_system.graph")
     List<String> getGraphNames();
+    @Select("select * from tour_system.tourism")
+    List<Tourism> getAllTourism();
+    @Select("select * from tour_system.tourism where name=#{name}")
+    Tourism getTourismByName(String name);
+    @Insert("insert into tour_system.tourism(name, graph, description, views, ratings, score) values(#{name}, #{graph}, #{description}, #{views}, #{ratings}, #{score})")
+    void insertTourism(Tourism tourism);
+    // 多字段更新，判断字段是否为空
+    void updateTourism(Tourism tourism);
 }

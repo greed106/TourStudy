@@ -1,8 +1,10 @@
 package com.ymj.tourstudy.service;
 
 import com.ymj.tourstudy.pojo.CrowdedEdge;
+import com.ymj.tourstudy.pojo.DTO.AddTourismScoreRequest;
 import com.ymj.tourstudy.pojo.Point;
 import com.ymj.tourstudy.pojo.TourMap;
+import com.ymj.tourstudy.pojo.Tourism;
 
 import java.util.List;
 
@@ -14,4 +16,8 @@ public interface MapService {
      List<Point> getCrowdedShortestPath(String name, Integer[] indexes);
      List<Point> getNearestPoints(String name, Integer index, Integer length);
      List<String> getMapNames();
+     List<Tourism> getAllTourism();
+     Tourism getTourismByName(String name);
+     void addScore(AddTourismScoreRequest req);
+     void addPageViews(String name);
 }

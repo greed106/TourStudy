@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddScoreRequest {
-    private String username;
-    private String title;
+public class AddTourismScoreRequest {
+    private String name;
     private Integer score;
 }
