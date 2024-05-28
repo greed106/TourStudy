@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymj.tourstudy.mapper.GraphMapper;
 import com.ymj.tourstudy.pojo.*;
-import com.ymj.tourstudy.utils.AVLTree;
-import com.ymj.tourstudy.utils.HuffmanResult;
-import com.ymj.tourstudy.utils.HuffmanUtils;
-import com.ymj.tourstudy.utils.RedBlackTree;
+import com.ymj.tourstudy.utils.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +23,12 @@ class TourStudyApplicationTests {
     AVLTree<JsonGraph> avlTree;
     @Autowired
     RedBlackTree<CrowdedGraph> redBlackTree;
+    @Autowired
+    MultiMap<String, Tag> diaryTagMultiMap;
+    @Autowired
+    MultiMap<Tourism, Tag> tourismTagMultiMap;
+    @Autowired
+    BinarySearchTree<Tourism> binarySearchTree;
 
     @Test
     void contextLoads() {
@@ -149,4 +152,11 @@ class TourStudyApplicationTests {
         graphMapper.updateTourism(tourism);
     }
 
+    @Test
+    void testMultiMap(){
+        List<Tag> tags = diaryTagMultiMap.get("ymj@go_to_code");
+        System.out.println(tags);
+        List<Tag> tags1 = tourismTagMultiMap.get(binarySearchTree.search("BNU"));
+        System.out.println(tags1);
+    }
 }

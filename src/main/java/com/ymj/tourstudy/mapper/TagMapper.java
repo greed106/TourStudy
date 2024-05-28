@@ -1,9 +1,7 @@
 package com.ymj.tourstudy.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.ymj.tourstudy.pojo.Tag;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -23,4 +21,13 @@ public interface TagMapper {
     List<String> getTagsByDiaryName(String diaryName);
     @Select("select tag_name from tour_system.tag_tourism where tourism_name=#{tourismName}")
     List<String> getTagsByTourismName(String tourismName);
+    @Delete("delete from tour_system.tag_diary where tag_name=#{tagName} and diary_name=#{diaryName}")
+    void deleteDiaryTag(@Param("tagName")String tagName, @Param("diaryName")String diaryName);
+    @Delete("delete from tour_system.tag_tourism where tag_name=#{tagName} and tourism_name=#{tourismName}")
+    void deleteTourismTag(@Param("tagName")String tagName, @Param("tourismName")String tourismName);
+    @Select("select * from tour_system.tag where tag_name=#{name}")
+    Tag getTagByName(String name);
+    @Insert("insert into tour_system.tag(tag_name) values(#{name})")
+    void insertTag(String name);
+
 }

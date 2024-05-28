@@ -36,7 +36,7 @@ public class DiaryController {
         String titlePrefix = request.getTitle();
         log.info("获取日记请求："+username+" "+titlePrefix);
 
-        List<Diary> diaries = diaryService.getDiary(username, titlePrefix);
+        List<Diary> diaries = diaryService.getDiaryByPrefix(username, titlePrefix);
 
         return Result.success(diaries);
     }

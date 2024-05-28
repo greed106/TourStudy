@@ -79,7 +79,7 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public List<Diary> getDiary(String username, String titlePrefix) {
+    public List<Diary> getDiaryByPrefix(String username, String titlePrefix) {
         String prefix = username + "@" + titlePrefix;
         List<String> keys = trieTree.keysWithPrefix(prefix);
         List<Diary> diaries = new ArrayList<>();
@@ -88,6 +88,16 @@ public class DiaryServiceImpl implements DiaryService {
             diaries.add(trieTree.search(key));
         }
         return diaries;
+    }
+
+    @Override
+    public Diary getDiaryByTitle(String username, String title) {
+        String key = username + "@" + title;
+        Diary diary = trieTree.search(key);
+        if(diary == null){
+            throw new NotFoundException("Diary not found");
+        }
+        return diary;
     }
 
     @Override
@@ -111,7 +121,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<String> keys = userMapper.getAllUsernames();
         List<Diary> diaries = new ArrayList<>();
         for(String username : keys){
-            List<Diary> userDiaries = getDiary(username, "");
+            List<Diary> userDiaries = getDiaryByPrefix(username, "");
             diaries.addAll(userDiaries);
         }
         Diary[] diaryArray = diaries.toArray(new Diary[0]);
@@ -153,7 +163,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<String> keys = userMapper.getAllUsernames();
         List<Diary> diaries = new ArrayList<>();
         for(String username : keys){
-            List<Diary> userDiaries = getDiary(username, "");
+            List<Diary> userDiaries = getDiaryByPrefix(username, "");
             for(Diary diary : userDiaries){
                 int patternSize = req.getKeyword().size();
                 if(patternSize == 1 && MatchUtils.bmMatch(req.getKeyword().get(0), diary.getContent()) != -1){

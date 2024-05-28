@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface DiaryService {
     public void uploadDiary(UploadDiaryRequest req);
-    public List<Diary> getDiary(String username, String titlePrefix);
+    public List<Diary> getDiaryByPrefix(String username, String titlePrefix);
+    public Diary getDiaryByTitle(String username, String title);
     public void addPageViews(String username, String title);
     public List<Diary> getSortedDiary(GetSortedDiaryRequest req);
     public void addScore(String username, String title, Integer score);
