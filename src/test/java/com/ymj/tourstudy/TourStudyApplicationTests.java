@@ -90,8 +90,8 @@ class TourStudyApplicationTests {
 
     @Test
     void testJsonGraph(){
-        String path = "C:/Users/ymj/Desktop/graph(4).json";
-        String picturePath = "C:/Users/ymj/Desktop/picture.txt";
+        String path = "C:/Users/ymj/Desktop/inside.json";
+        String picturePath = "C:/Users/ymj/Desktop/inside.txt";
         try{
             File file = new File(path);
             File pic = new File(picturePath);
@@ -99,11 +99,11 @@ class TourStudyApplicationTests {
             String picture = new String(Files.readAllBytes(pic.toPath()));
             ObjectMapper mapper = new ObjectMapper();
             Graph graph = mapper.readValue(json, Graph.class);
-            graph.setName("scene");
-            JsonGraph jsonGraph = new JsonGraph("scene", json, picture);
+            graph.setName("inside");
+            JsonGraph jsonGraph = new JsonGraph("inside", json, picture);
             graphMapper.insertGraph(jsonGraph);
 //            System.out.println(graph);
-            JsonGraph j = graphMapper.getGraphByName("scene");
+            JsonGraph j = graphMapper.getGraphByName("inside");
             List<Point> q = j.getGraph().getAllPoints();
             // 输出点的数量
             System.out.println("q.size() " + q.size());
@@ -111,7 +111,7 @@ class TourStudyApplicationTests {
 //            q.remove(1);
 //            System.out.println(q);
 //            List<Point> p = graph.shortestPathThroughAllPoints(q);
-//            System.out.println(p);
+            System.out.println(graph);
         }catch(Exception e) {
             e.printStackTrace();
         }
