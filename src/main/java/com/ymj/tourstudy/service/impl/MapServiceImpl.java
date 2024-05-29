@@ -3,15 +3,19 @@ package com.ymj.tourstudy.service.impl;
 import com.ymj.tourstudy.exception.NotFoundException;
 import com.ymj.tourstudy.exception.ParseMapException;
 import com.ymj.tourstudy.mapper.GraphMapper;
+import com.ymj.tourstudy.mapper.TagMapper;
 import com.ymj.tourstudy.pojo.*;
 import com.ymj.tourstudy.pojo.DTO.AddTourismScoreRequest;
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.service.MapService;
-import com.ymj.tourstudy.utils.AVLTree;
-import com.ymj.tourstudy.utils.BinarySearchTree;
-import com.ymj.tourstudy.utils.RedBlackTree;
+import com.ymj.tourstudy.service.TagService;
+import com.ymj.tourstudy.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,6 +28,8 @@ public class MapServiceImpl implements MapService {
     private RedBlackTree<CrowdedGraph> crowdedGraphTree;
     @Autowired
     private BinarySearchTree<Tourism> tourismTree;
+    @Autowired
+    private TagMapper tagMapper;
     @Override
     public TourMap getMap(String name) {
         try{
@@ -130,5 +136,59 @@ public class MapServiceImpl implements MapService {
         }
         tourism.setViews(tourism.getViews() + 1);
         graphMapper.updateTourism(tourism);
+    }
+    @Override
+    public List<Tourism> getSortedTourism(GetSortedResultRequest req) {
+        List<String> tags = req.getTags();
+        MySet<Tourism> tourismSet = new MySet<>();
+        if(tags != null && !tags.isEmpty()) {
+            for(String tag : tags){
+                List<String> tourismNames = tagMapper.getTourismNameByTag(tag);
+                List<Tourism> tempTourisms = new ArrayList<>();
+                for(String tourismName : tourismNames) {
+                    Tourism tourism = getTourismByName(tourismName);
+                    tempTourisms.add(tourism);
+                }
+                for(Tourism tourism : tempTourisms) {
+                    tourismSet.add(tourism.getName(), tourism);
+                }
+            }
+        }else{
+            for(Tourism tourism : getAllTourism()) {
+                tourismSet.add(tourism.getName(), tourism);
+            }
+        }
+
+        List<String> keywords = req.getKeywords();
+        List<Tourism> tourismList = new ArrayList<>();
+        if(keywords == null || keywords.isEmpty()) {
+            tourismList.addAll(tourismSet.values());
+        }else{
+            for(Tourism tourism : tourismSet.values()) {
+                String name = tourism.getName();
+                String description = tourism.getDescription();
+                boolean isNameMatch = false;
+                boolean isDescriptionMatch = MatchUtils.acAutomatonMatch(keywords, description);
+                for(String keyword : keywords) {
+                    if(MatchUtils.kmpMatch(keyword, name) != -1){
+                        isNameMatch = true;
+                        break;
+                    }
+                }
+                if(isNameMatch || isDescriptionMatch) {
+                    tourismList.add(tourism);
+                }
+            }
+        }
+
+        Tourism[] tourismArray = tourismList.toArray(new Tourism[0]);
+        Comparator<Tourism> comparator = Tourism.getComparator(req.isViews(), req.isScore());
+        if(req.getLength() <= 0) {
+            SortUtils.quickSort(tourismArray, comparator.reversed());
+        }else{
+            tourismArray = SortUtils.getLastN(tourismArray, req.getLength(), comparator);
+            SortUtils.reverse(tourismArray);
+        }
+        return Arrays.asList(tourismArray);
     }
 }

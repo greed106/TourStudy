@@ -8,9 +8,11 @@ import com.ymj.tourstudy.mapper.UserMapper;
 import com.ymj.tourstudy.pojo.CompressedDiary;
 import com.ymj.tourstudy.pojo.DTO.GetMatchDiaryRequest;
 import com.ymj.tourstudy.pojo.DTO.GetSortedDiaryRequest;
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.DTO.UploadDiaryRequest;
 import com.ymj.tourstudy.pojo.Diary;
 import com.ymj.tourstudy.service.DiaryService;
+import com.ymj.tourstudy.service.TagService;
 import com.ymj.tourstudy.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -30,7 +33,7 @@ public class DiaryServiceImpl implements DiaryService {
     @Autowired
     private DiaryMapper diaryMapper;
     @Autowired
-    private TagMapper tagMapper;
+    private TagService tagService;
     @Autowired
     private UserMapper userMapper;
 
@@ -74,7 +77,7 @@ public class DiaryServiceImpl implements DiaryService {
             return;
         }
         for(String tag : tags){
-            tagMapper.insertDiaryTag(tag, key);
+            tagService.insertDiaryTag(tag, key);
         }
     }
 
@@ -117,24 +120,53 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public List<Diary> getSortedDiary(GetSortedDiaryRequest req){
-        List<String> keys = userMapper.getAllUsernames();
-        List<Diary> diaries = new ArrayList<>();
-        for(String username : keys){
-            List<Diary> userDiaries = getDiaryByPrefix(username, "");
-            diaries.addAll(userDiaries);
-        }
-        Diary[] diaryArray = diaries.toArray(new Diary[0]);
-        // 进行排序
-        SortUtils.quickSort(diaryArray, (d1, d2) -> {
-            if(req.getSortBy().equals("views")){
-                return d2.getPageViews() - d1.getPageViews();
-            }else if(req.getSortBy().equals("score")){
-                return (int)(d2.getScore() - d1.getScore());
-            }else{
-                return d2.getCreatedTime().compareTo(d1.getCreatedTime());
+    public List<Diary> getSortedDiary(GetSortedResultRequest req){
+        List<String> tags = req.getTags();
+        MySet<Diary> diarySet = new MySet<>();
+        if(tags != null && !tags.isEmpty()) {
+            for (String tag : tags) {
+                List<Diary> tempDiaries = tagService.getDiaryByTag(tag);
+                for (Diary diary : tempDiaries) {
+                    diarySet.add(diary.getUsername() + "@" + diary.getTitle(), diary);
+                }
             }
-        });
+        }else{
+            for(Diary diary : getAllDiaries()) {
+                diarySet.add(diary.getUsername() + "@" + diary.getTitle(), diary);
+            }
+        }
+
+        List<String> keywords = req.getKeywords();
+        List<Diary> diaryList = new ArrayList<>();
+        if(keywords == null || keywords.isEmpty()) {
+            diaryList.addAll(diarySet.values());
+        }else{
+            for(Diary diary : diarySet.values()) {
+                String title = diary.getTitle();
+                String content = diary.getContent();
+                boolean isTitleMatch = false;
+                boolean isContentMatch = MatchUtils.acAutomatonMatch(keywords, content);
+                for(String keyword : keywords){
+                    if(MatchUtils.bmMatch(keyword, title) != -1){
+                        isTitleMatch = true;
+                        break;
+                    }
+                }
+                if(isTitleMatch || isContentMatch){
+                    diaryList.add(diary);
+                }
+            }
+        }
+
+        Diary[] diaryArray = diaryList.toArray(new Diary[0]);
+        Comparator<Diary> comparator = Diary.getComparator(req.isViews(), req.isScore());
+        if(req.getLength() <= 0){
+            SortUtils.quickSort(diaryArray, comparator.reversed());
+        }else{
+            diaryArray = SortUtils.getLastN(diaryArray, req.getLength(), comparator);
+            SortUtils.reverse(diaryArray);
+        }
+
         return Arrays.asList(diaryArray);
     }
 
@@ -159,20 +191,14 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public List<Diary> getMatchedDiary(GetMatchDiaryRequest req) {
-        List<String> keys = userMapper.getAllUsernames();
+    public List<Diary> getAllDiaries() {
+        List<String> usernames = userMapper.getAllUsernames();
         List<Diary> diaries = new ArrayList<>();
-        for(String username : keys){
-            List<Diary> userDiaries = getDiaryByPrefix(username, "");
-            for(Diary diary : userDiaries){
-                int patternSize = req.getKeyword().size();
-                if(patternSize == 1 && MatchUtils.bmMatch(req.getKeyword().get(0), diary.getContent()) != -1){
-                    diaries.add(diary);
-                }else if(patternSize > 1 && MatchUtils.acAutomatonMatch(req.getKeyword(), diary.getContent())){
-                    diaries.add(diary);
-                }
-            }
+        for(String username : usernames){
+            List<Diary> tempDiaries = getDiaryByPrefix(username, "");
+            diaries.addAll(tempDiaries);
         }
         return diaries;
     }
+
 }

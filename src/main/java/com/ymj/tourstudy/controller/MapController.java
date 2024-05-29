@@ -88,4 +88,11 @@ public class MapController {
         mapService.addPageViews(request.getName());
         return Result.success();
     }
+
+    @PostMapping("/tour/map/get_sorted_tourism")
+    public Result getSortedTourism(@RequestBody GetSortedResultRequest request) {
+        log.info("请求获取排序后的旅游景点: {}", request);
+        List<Tourism> tourism = mapService.getSortedTourism(request);
+        return Result.success(tourism);
+    }
 }

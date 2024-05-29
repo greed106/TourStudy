@@ -2,6 +2,7 @@ package com.ymj.tourstudy.service;
 
 import com.ymj.tourstudy.pojo.CrowdedEdge;
 import com.ymj.tourstudy.pojo.DTO.AddTourismScoreRequest;
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.Point;
 import com.ymj.tourstudy.pojo.TourMap;
 import com.ymj.tourstudy.pojo.Tourism;
@@ -20,4 +21,5 @@ public interface MapService {
      Tourism getTourismByName(String name);
      void addScore(AddTourismScoreRequest req);
      void addPageViews(String name);
+     List<Tourism> getSortedTourism(GetSortedResultRequest req);
 }

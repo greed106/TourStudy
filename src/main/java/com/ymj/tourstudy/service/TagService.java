@@ -1,5 +1,6 @@
 package com.ymj.tourstudy.service;
 
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.Diary;
 import com.ymj.tourstudy.pojo.Tag;
 import com.ymj.tourstudy.pojo.Tourism;
@@ -17,4 +18,5 @@ public interface TagService {
     boolean isTagExist(String tagName);
     boolean isDiaryTagExist(String tagName, String username, String title);
     boolean isTourismTagExist(String tagName, String name);
+    void insertDiaryTag(String tagName, String key);
 }

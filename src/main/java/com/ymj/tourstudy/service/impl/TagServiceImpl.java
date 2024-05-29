@@ -1,19 +1,25 @@
 package com.ymj.tourstudy.service.impl;
 
+import com.ymj.tourstudy.exception.NotFoundException;
+import com.ymj.tourstudy.mapper.DiaryMapper;
 import com.ymj.tourstudy.mapper.TagMapper;
+import com.ymj.tourstudy.pojo.CompressedDiary;
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.Diary;
 import com.ymj.tourstudy.pojo.Tag;
 import com.ymj.tourstudy.pojo.Tourism;
 import com.ymj.tourstudy.service.DiaryService;
 import com.ymj.tourstudy.service.MapService;
 import com.ymj.tourstudy.service.TagService;
-import com.ymj.tourstudy.utils.MultiMap;
+import com.ymj.tourstudy.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -22,7 +28,7 @@ public class TagServiceImpl implements TagService {
     @Autowired
     private TagMapper tagMapper;
     @Autowired
-    private DiaryService diaryService;
+    private TrieTree<Diary> trieTree;
     @Autowired
     private MapService mapService;
     @Autowired
@@ -53,8 +59,10 @@ public class TagServiceImpl implements TagService {
         List<String> diaryNames = tagMapper.getDiaryNameByTag(tagName);
         List<Diary> diaries = new ArrayList<>();
         for(String diaryName : diaryNames) {
-            String[] diaryInfo = diaryName.split("@");
-            Diary diary = diaryService.getDiaryByTitle(diaryInfo[0], diaryInfo[1]);
+            Diary diary = trieTree.search(diaryName);
+            if(diary == null){
+                throw new NotFoundException("Diary not found");
+            }
             diaries.add(diary);
         }
         return diaries;
@@ -128,5 +136,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public boolean isTourismTagExist(String tagName, String name) {
         return tagMapper.getTagsByTourismName(name).contains(tagName);
+    }
+
+    @Override
+    public void insertDiaryTag(String tagName, String key) {
+        tagMapper.insertDiaryTag(tagName, key);
     }
 }

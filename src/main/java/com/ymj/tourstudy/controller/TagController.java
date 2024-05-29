@@ -1,5 +1,6 @@
 package com.ymj.tourstudy.controller;
 
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.DTO.TagRequest;
 import com.ymj.tourstudy.pojo.Tag;
 import com.ymj.tourstudy.service.TagService;

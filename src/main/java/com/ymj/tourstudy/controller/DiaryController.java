@@ -53,7 +53,7 @@ public class DiaryController {
     }
 
     @PostMapping("/tour/diary/get_sorted_diary")
-    public Result getSortedDiary(@RequestBody GetSortedDiaryRequest request){
+    public Result getSortedDiary(@RequestBody GetSortedResultRequest request){
         log.info("获取排序后的日记请求："+request);
 
         List<Diary> diaries = diaryService.getSortedDiary(request);
@@ -71,14 +71,5 @@ public class DiaryController {
         diaryService.addScore(username, title, score);
 
         return Result.success();
-    }
-
-    @PostMapping("/tour/diary/get_matched_diary")
-    public Result getMatchDiary(@RequestBody GetMatchDiaryRequest request){
-        log.info("获取匹配日记请求："+request);
-
-        List<Diary> diaries = diaryService.getMatchedDiary(request);
-
-        return Result.success(diaries);
     }
 }

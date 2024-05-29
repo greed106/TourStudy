@@ -2,6 +2,7 @@ package com.ymj.tourstudy.service;
 
 import com.ymj.tourstudy.pojo.DTO.GetMatchDiaryRequest;
 import com.ymj.tourstudy.pojo.DTO.GetSortedDiaryRequest;
+import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.pojo.DTO.UploadDiaryRequest;
 import com.ymj.tourstudy.pojo.Diary;
 
@@ -13,7 +14,7 @@ public interface DiaryService {
     public List<Diary> getDiaryByPrefix(String username, String titlePrefix);
     public Diary getDiaryByTitle(String username, String title);
     public void addPageViews(String username, String title);
-    public List<Diary> getSortedDiary(GetSortedDiaryRequest req);
+    public List<Diary> getSortedDiary(GetSortedResultRequest req);
     public void addScore(String username, String title, Integer score);
-    public List<Diary> getMatchedDiary(GetMatchDiaryRequest req);
+    public List<Diary> getAllDiaries();
 }

@@ -59,40 +59,62 @@ public class SortUtils {
         return i + 1;
     }
     /**
-     * 使用堆排序获取排序后的前n个元素。
+     * 使用优先队列获取排序后的前n个元素。
      *
      * @param <T>        数组的数据类型。
      * @param array      要排序的数组。
-     * @param n          要获取的前n个元素的数量。
+     * @param n          要获取的后n个元素的数量。
      * @param comparator 定义排序规则的比较器。
-     * @return 排序后的前n个元素。
+     * @return 排序后的后n个元素。
      */
     public static <T> T[] getLastN(T[] array, int n, Comparator<T> comparator) {
-        PriorityQueue<T> maxHeap = new PriorityQueue<>(n, comparator);
+        if(n > array.length){
+            n = array.length;
+        }
+        // 使用优先队列来维护前 n 个最大元素
+        MyPriorityQueueMinHeap<T> queue = new MyPriorityQueueMinHeap<>(comparator);
+
+        // 遍历数组中的每一个元素
         for (T element : array) {
-            if (maxHeap.size() < n) {
-                maxHeap.offer(element);
+            if (queue.size() < n) {
+                // 如果优先队列中元素数量少于 n，直接添加
+                queue.insert(element);
             } else {
-                // 如果新元素比堆顶元素小或者等于，那么将新元素加入堆中
-                if (comparator.compare(element, maxHeap.peek()) <= 0) {
-                    maxHeap.poll();
-                    maxHeap.offer(element);
+                // 否则，比较当前元素和优先队列的队头元素
+                if (comparator.compare(element, queue.peek()) > 0) {
+                    // 如果当前元素比队头元素更大（根据 comparator），则替换队头元素
+                    queue.remove();
+                    queue.insert(element);
                 }
             }
         }
-        T[] result = (T[]) Array.newInstance(array.getClass().getComponentType(), n);
+
+        // 将优先队列中的元素转化为数组返回
+        @SuppressWarnings("unchecked")
+        T[] result = (T[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), n);
         for (int i = 0; i < n; i++) {
-            result[i] = maxHeap.poll();
+            result[i] = queue.remove();
         }
+
+        // 返回前，对结果数组进行排序
+        Arrays.sort(result, comparator);
         return result;
+    }
+    public static <T> void reverse(T[] array) {
+        int n = array.length;
+        for (int i = 0; i < n / 2; i++) {
+            T temp = array[i];
+            array[i] = array[n - i - 1];
+            array[n - i - 1] = temp;
+        }
     }
 
     public static void main(String[] args) {
         Integer[] array = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
 
-        Integer[] top5 = getLastN(array, array.length, Comparator.reverseOrder());
+        Integer[] top5 = getLastN(array, 5, Comparator.reverseOrder());
 
-        quickSort(array, Comparator.naturalOrder());
+        quickSort(array, Comparator.reverseOrder());
         System.out.println(Arrays.toString(array));
         System.out.println(Arrays.toString(top5));
     }
