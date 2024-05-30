@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.ymj.tourstudy.serializer.PointKeyDeserializer;
 import com.ymj.tourstudy.serializer.PointKeySerializer;
 import com.ymj.tourstudy.utils.MyPriorityQueueMinHeap;
+import com.ymj.tourstudy.utils.SortUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Data
@@ -236,15 +238,19 @@ public class Graph {
     }
 
     public List<Point> getNearestPoints(int index, int length) {
-        List<Point> points = new ArrayList<>();
-        // 使用shortestDistances获取point所有可达的点中距离小于等于length的点
+        MyPriorityQueueMinHeap<Point> minHeap = new MyPriorityQueueMinHeap<>(Comparator.comparingInt(p -> shortestDistances[index][p.getIndex()]));
 
         for (int i = 0; i < shortestDistances[index].length; i++) {
-            if (shortestDistances[index][i] <= length) {
-                if(i != index)
-                    points.add(getPointByIndex(i));
+            if (shortestDistances[index][i] <= length && i != index) {
+                minHeap.insert(getPointByIndex(i));
             }
         }
+
+        List<Point> points = new ArrayList<>();
+        while (!minHeap.isEmpty()) {
+            points.add(minHeap.remove());
+        }
+
         return points;
     }
     public static void main(String[] args) {
