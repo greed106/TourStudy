@@ -50,7 +50,7 @@ public class MapController {
     @PostMapping("/tour/map/get_nearest_points")
     public Result getNearestPoints(@RequestBody GetNearestPointsRequest req) {
         log.info("请求获取最近点: {}", req.getName());
-        List<Point> nearestPoints = mapService.getNearestPoints(req.getName(), req.getIndex(), req.getLength());
+        List<Point> nearestPoints = mapService.getNearestPoints(req);
         return Result.success(nearestPoints);
     }
 

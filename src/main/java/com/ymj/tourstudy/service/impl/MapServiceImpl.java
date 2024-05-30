@@ -6,9 +6,9 @@ import com.ymj.tourstudy.mapper.GraphMapper;
 import com.ymj.tourstudy.mapper.TagMapper;
 import com.ymj.tourstudy.pojo.*;
 import com.ymj.tourstudy.pojo.DTO.AddTourismScoreRequest;
+import com.ymj.tourstudy.pojo.DTO.GetNearestPointsRequest;
 import com.ymj.tourstudy.pojo.DTO.GetSortedResultRequest;
 import com.ymj.tourstudy.service.MapService;
-import com.ymj.tourstudy.service.TagService;
 import com.ymj.tourstudy.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,11 +88,25 @@ public class MapServiceImpl implements MapService {
     }
 
     @Override
-    public List<Point> getNearestPoints(String name, Integer index, Integer length) {
+    public List<Point> getNearestPoints(GetNearestPointsRequest req) {
+        String name = req.getName();
+        int index = req.getIndex();
+        int length = req.getLength();
+        List<String> keywords = req.getKeywords();
         try{
             JsonGraph jsonGraph = graphTree.search(name);
             Graph graph = jsonGraph.getGraph();
-            return graph.getNearestPoints(index, length);
+            List<Point> filteredPoints = new ArrayList<>();
+            if(keywords != null && !keywords.isEmpty()){
+                for(Point point : graph.getNearestPoints(index, length)){
+                    if(MatchUtils.acAutomatonMatch(keywords, point.getName())){
+                        filteredPoints.add(point);
+                    }
+                }
+                return filteredPoints;
+            }else{
+                return graph.getNearestPoints(index, length);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
