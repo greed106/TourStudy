@@ -72,13 +72,18 @@ public class DiaryServiceImpl implements DiaryService {
             diaryMapper.setCompressedDiary(compressedDiary);
         }
 
-        String[] tags = req.getTags();
-        if(tags == null || tags.length == 0){
+        List<String> tags = Arrays.asList(req.getTags());
+        if(tags == null || tags.isEmpty()){
             return;
         }
-        for(String tag : tags){
-            tagService.insertDiaryTag(tag, key);
-        }
+        tagService.updateDiaryTags(tags, diary.getUsername(), diary.getTitle());
+//        if(tags == null || tags.length == 0){
+//            return;
+//        }
+//        for(String tag : tags){
+//            tagService.insertDiaryTag(tag, key);
+//        }
+
     }
 
     @Override
