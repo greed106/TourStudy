@@ -17,7 +17,11 @@ public class MultiMap<K, V> {
     }
 
     public List<V> get(K key) {
-        return map.get(key);
+        List<V> values = map.get(key);
+        if(values == null) {
+            return new ArrayList<>();
+        }
+        return values;
     }
 
     public boolean containsKey(K key) {

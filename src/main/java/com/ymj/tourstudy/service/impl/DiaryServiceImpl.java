@@ -77,12 +77,6 @@ public class DiaryServiceImpl implements DiaryService {
             return;
         }
         tagService.updateDiaryTags(tags, diary.getUsername(), diary.getTitle());
-//        if(tags == null || tags.length == 0){
-//            return;
-//        }
-//        for(String tag : tags){
-//            tagService.insertDiaryTag(tag, key);
-//        }
 
     }
 
