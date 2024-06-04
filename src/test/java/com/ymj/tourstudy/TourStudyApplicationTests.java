@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymj.tourstudy.mapper.GraphMapper;
 import com.ymj.tourstudy.pojo.*;
+import com.ymj.tourstudy.service.DiaryService;
+import com.ymj.tourstudy.service.TagService;
 import com.ymj.tourstudy.utils.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +32,8 @@ class TourStudyApplicationTests {
     MultiMap<Tourism, Tag> tourismTagMultiMap;
     @Autowired
     BinarySearchTree<Tourism> binarySearchTree;
+    @Autowired
+    TagService tagService;
 
     @Test
     void contextLoads() {
@@ -148,8 +153,13 @@ class TourStudyApplicationTests {
 
     @Test
     void testTourism(){
-        Tourism tourism = new Tourism("BNU", "BNU", "Beijing Normal University (BNU) grew out of the Education Department of Imperial University of Peking established in 1902, which initiated teacher training in China’s higher education. After the development for over a century, BNU has become a comprehensive and research-intensive university with its main characteristics of basic disciplines in sciences and humanities, teacher education and educational science.\nBNU consists of Beijing Campus and Zhuhai Campus. The University has 3 faculties, 27 schools, 2 departments, 11 research institutes and 4 academies. In addition, there are more than 5.4 million books and 8.2 million e-books in its libraries.BNU is home to more than 35,000 full-time students, and has more than 8000 faculty members, including 2562 full-time teachers, 94% of whom have earned a doctoral degree.", 1, 1, 10.0);
-        graphMapper.updateTourism(tourism);
+        for(int i = 1; i <= 100; i++){
+            String name = "summer palace copy" + i;
+//            String name = "BNU_COPY" + i;
+            Tourism tourism = new Tourism(name, "scene", "The Summer Palace is a vast ensemble of lakes, gardens and palaces in Beijing. Mainly dominated by Longevity Hill and Kunming Lake, it covers an expanse of 2.9 square kilometers, three-quarters of which is water. In December 1998, UNESCO included the Summer Palace on its World Heritage List. It declared the Summer Palace \"a masterpiece of Chinese landscape garden design. The natural landscape of hills and open water is combined with artificial features such as pavilions, halls, palaces, temples and bridges to form a harmonious ensemble of outstanding aesthetic value\".", 1, 1, 10.0);
+            graphMapper.insertTourism(tourism);
+        }
+
     }
 
     @Test
@@ -158,5 +168,28 @@ class TourStudyApplicationTests {
         System.out.println(tags);
         List<Tag> tags1 = tourismTagMultiMap.get(binarySearchTree.search("BNU"));
         System.out.println(tags1);
+    }
+
+    @Test
+    void testTagService(){
+        List<Tag> tags = tagService.getAllTags();
+        for(int i = 1; i <= 100; i++){
+            String name = "BNU_COPY" + i;
+            // 从tags中随机选择几个tag
+            int start = (int)(Math.random() * tags.size());
+            int end = (int)(Math.random() * tags.size());
+            if(start > end){
+                int temp = start;
+                start = end;
+                end = temp;
+            }
+            List<Tag> tagList = tags.subList(start, end);
+            List<String> tagNames = new ArrayList<>();
+            for(Tag tag : tagList){
+                tagNames.add(tag.getName());
+            }
+            tagService.updateTourismTags(tagNames, name);
+        }
+
     }
 }
